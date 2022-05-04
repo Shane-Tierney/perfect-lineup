@@ -1,9 +1,15 @@
 const validateLineup = (lineup) => {
   const pos = positionCheck(lineup)
   const game = gameCheck(lineup)
-  console.log(game)
+  const team = teamCheck(lineup)
+  const salary = salaryChecker(lineup)
 
+  if (pos && game && team && salary) {
+    return true
+  } else return false
+}
 
+const salaryChecker = (lineup) => {
   const salaryCheck = lineup.reduce((total, currentPlayer) => {
     const { salary } = currentPlayer
 
@@ -12,7 +18,13 @@ const validateLineup = (lineup) => {
 
   if (salaryCheck > 45000) {
     return false
-  } else if (pos === false) {
+  } else return true
+}
+
+const salaryChecked = (lineup) => {
+  const sal = salaryChecker(lineup)
+
+  if (sal > 45000) {
     return false
   } else return true
 }
@@ -89,25 +101,36 @@ const shortStop = (lineup) => {
   } else return true
 }
 
-const gameCheck = (lineup) => {
-  const count = {}
-  const gameArray = []
+const teamCheck = (lineup) => {
+  const uniqueTeams = [...new Set(lineup.map(player => player.teamId))]
 
-  for (let i = 0; i < lineup.length; i++) {
-    const element = lineup[i]
+  for (let i = 0; i < uniqueTeams.length; i++) {
+    const currentTeam = uniqueTeams[i]
 
-    gameArray.push(element.gameID)
-  }
-console.log(gameArray)
-  for (const element of gameArray) {
-    if (count[element]) {
-      count[element] += 1
-    } else {
-      count[element] = 1
+    const currentLineup = lineup.filter((player) => player.teamId === currentTeam).length
+
+    if (currentLineup > 2) {
+      return false
     }
   }
 
-  return count
+  return true
+}
+
+const gameCheck = (lineup) => {
+  const uniqueTeams = [...new Set(lineup.map(player => player.gameId))]
+
+    for (let i = 0; i < uniqueTeams.length; i++) {
+    const currentTeam = uniqueTeams[i]
+
+    const currentLineup = lineup.filter((player) => player.gameId === currentTeam).length
+
+    if (currentLineup > 2) {
+      return false
+    }
+  }
+
+  return true
 }
 
 module.exports = validateLineup
